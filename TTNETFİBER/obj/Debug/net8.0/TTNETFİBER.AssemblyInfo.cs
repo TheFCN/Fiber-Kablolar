@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TTNETFİBER")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+879ed28309480ee35f0f066027fbed0223ba2b0b")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f26723d4c537b2001921cb91a08afbd9bf822952")]
 [assembly: System.Reflection.AssemblyProductAttribute("TTNETFİBER")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TTNETFİBER")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

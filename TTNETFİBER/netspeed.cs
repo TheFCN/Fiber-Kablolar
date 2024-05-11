@@ -8,8 +8,9 @@ using TTNETFİBER;
 
 public static class netspeed
 {
-    public  static void Run()
-    { bool isFirstDepartment = true;
+    public static void Run()
+    {
+        bool isFirstDepartment = true;
         List<ResultModel> resultList = new List<ResultModel>();
         RestClientOptions options = new RestClientOptions
         {
@@ -21,122 +22,105 @@ public static class netspeed
             new RestRequest(
                 "/Home/GetAddress", Method.Post);
 
-        request.AddHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-        request.AddParameter("type", "2");
-        request.AddParameter("id", "1199");
-        new RestRequest(
-            "/Home/GetAddress", Method.Post);
+        // request.AddHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+        // request.AddParameter("type", "2");
+        // request.AddParameter("id", "1199");
+        // new RestRequest(
+        //     "/Home/GetAddress", Method.Post);
 
         request.AddHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
         request.AddParameter("type", "3");
         request.AddParameter("id", "6554");
 
-        var getSemtlist =  client.ExecuteAsync<ResponseModel>(request).Result;
+        var getMahList = client.ExecuteAsync<ResponseModel>(request).Result;
 
 
-        foreach (var SemtItem in getSemtlist.Data.Data)
+        foreach (var mahItem in getMahList.Data.Data)
         {
-            
             request =
                 new RestRequest(
                     "/Home/GetAddress", Method.Post);
 
             request.AddHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
             request.AddParameter("type", "4");
-            request.AddParameter("id", SemtItem.Code);
+            request.AddParameter("id", mahItem.Code);
 
-            var getMahalleList =  client.ExecuteAsync<ResponseModel>(request).Result;
+            var getSokakList = client.ExecuteAsync<ResponseModel>(request).Result;
 
-            foreach (var getMahalleItem in getMahalleList.Data.Data)
+            foreach (var getSokakItem in getSokakList.Data.Data)
             {
                 request =
                     new RestRequest(
                         "/Home/GetAddress", Method.Post);
 
                 request.AddHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-                request.AddParameter("type", "3");
-                request.AddParameter("id", getMahalleItem.Code);
+                request.AddParameter("type", "5");
+                request.AddParameter("id", getSokakItem.Code);
 
-                var getSokakList =  client.ExecuteAsync<ResponseModel>(request).Result;
+                var getBinaList = client.ExecuteAsync<ResponseModel>(request).Result;
 
 
-                foreach (var sokakItem in getSokakList.Data.Data)
+                foreach (var BinaItem in getBinaList.Data.Data)
                 {
                     request =
                         new RestRequest(
                             "/Home/GetAddress", Method.Post);
 
                     request.AddHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-                    request.AddParameter("type", "4");
-                    request.AddParameter("id", sokakItem.Code);
+                    request.AddParameter("type", "6");
+                    request.AddParameter("id", BinaItem.Code);
 
-                    var getApartmanList =  client.ExecuteAsync<ResponseModel>(request).Result;
+                    var getDaire = client.ExecuteAsync<ResponseModel>(request).Result;
 
-                    foreach (var apartmentItem in getApartmanList.Data.Data)
+                    foreach (var daireItem in getDaire.Data.Data)
                     {
                         request =
                             new RestRequest(
-                                "/Home/GetAddress", Method.Post);
+                                "/Home/GetInfrastractureQueryResult", Method.Post);
 
                         request.AddHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-                        request.AddParameter("type", "5");
-                        request.AddParameter("id", apartmentItem.Code);
+                        request.AddParameter("searchKey", daireItem.Code);
 
-                        var getKapiNoList =  client.ExecuteAsync<ResponseModel>(request).Result;
 
-                        foreach (var daireItem in getKapiNoList.Data.Data)
+                        var getResult = client.ExecuteAsync<string>(request).Result;
+
+                        if (!string.IsNullOrEmpty(getResult.Data))
                         {
-                            request =
-                                new RestRequest(
-                                    "/Home/GetInfrastractureQueryResult", Method.Post);
+                            var ConvertedResult =
+                                Newtonsoft.Json.JsonConvert.DeserializeObject<ResultModel>(getResult.Data);
 
-                            request.AddHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-                            request.AddParameter("GetInfrastractureQueryResult", daireItem.Code);
+                            var lastResult = new BeautifiedModel("Bolu", "Merkez", "Merkez", mahItem.Name,
+                                mahItem.Code, getSokakItem.Name, getSokakItem.Code, BinaItem.Name,
+                                BinaItem.Code, daireItem.Name, daireItem.Code, ConvertedResult);
+                            Console.WriteLine(JsonConvert.SerializeObject(lastResult));
+                            WriteToCsv(lastResult, "sonuc.csv", isFirstDepartment);
+                            isFirstDepartment = false;
+                        }
+                        else
+                        {
+                            ResultModel bos = new ResultModel();
+                            var lastResult = new BeautifiedModel("Bolu", "Merkez", "Merkez", mahItem.Name,
+                                mahItem.Code, getSokakItem.Name, getSokakItem.Code, BinaItem.Name,
+                                BinaItem.Code, daireItem.Name, daireItem.Code, bos);
+                            Console.WriteLine(JsonConvert.SerializeObject(lastResult));
 
 
-                            var getResult =  client.ExecuteAsync<string>(request).Result;
-
-                            if (!string.IsNullOrEmpty(getResult.Data))
-                            {
-                                var ConvertedResult =
-                                    Newtonsoft.Json.JsonConvert.DeserializeObject<ResultModel>(getResult.Data);
-
-                                var lastResult = new BeautifiedModel("Bolu", "Merkez", SemtItem.Name, getMahalleItem.Name,
-                                    getMahalleItem.Code, sokakItem.Name, sokakItem.Code, apartmentItem.Name,
-                                    apartmentItem.Code, daireItem.Name, daireItem.Code, ConvertedResult);
-                             Console.WriteLine(JsonConvert.SerializeObject(lastResult));
-                             WriteToCsv(lastResult, "sonuc.csv",isFirstDepartment);
-                             isFirstDepartment = false;
-                            }
-                            else
-                            {
-                                ResultModel bos = new ResultModel();
-                                var lastResult = new BeautifiedModel("Bolu", "Merkez", SemtItem.Name, getMahalleItem.Name,
-                                    getMahalleItem.Code, sokakItem.Name, sokakItem.Code, apartmentItem.Name,
-                                    apartmentItem.Code, daireItem.Name, daireItem.Code, bos);
-                                Console.WriteLine(JsonConvert.SerializeObject(lastResult));
-                               
-
-                                WriteToCsv(lastResult, "sonuc.csv",isFirstDepartment);
-                                isFirstDepartment = false;
-
-                               
-                            }
-
-                         
+                            WriteToCsv(lastResult, "sonuc.csv", isFirstDepartment);
+                            isFirstDepartment = false;
                         }
                     }
                 }
             }
         }
 
-        static void WriteToCsv(BeautifiedModel result, string filePath,bool writeHeader)
+        static void WriteToCsv(BeautifiedModel result, string filePath, bool writeHeader)
         {
             try
             {
-                using (var writer = new StreamWriter(filePath, true)) // Append modunu true olarak ayarlayın
+                using (var writer = new StreamWriter(filePath, true,System.Text.Encoding.UTF8)) // Append modunu true olarak ayarlayın
                 using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
                 {
+                   
                     if (writeHeader)
                     {
                         csv.WriteHeader<BeautifiedModel>();
