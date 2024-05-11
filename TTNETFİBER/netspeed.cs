@@ -36,6 +36,7 @@ public static class netspeed
 
         foreach (var SemtItem in getSemtlist.Data.Data.Where(x=>x.Name.ToLower()=="merkez"))
         {
+            
             request =
                 new RestRequest(
                     "/Home/GetAddress", Method.Post);
