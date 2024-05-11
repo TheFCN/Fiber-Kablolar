@@ -17,3 +17,4 @@
 /Users/fcn/RiderProjects/TTNETFİBER/TTNETFİBER/obj/Debug/net8.0/ref/TTNETFİBER.dll
 /Users/fcn/RiderProjects/TTNETFİBER/TTNETFİBER/bin/Debug/net8.0/CsvHelper.dll
 /Users/fcn/RiderProjects/TTNETFİBER/TTNETFİBER/bin/Debug/net8.0/Newtonsoft.Json.dll
+/Users/fcn/RiderProjects/TTNETFİBER/TTNETFİBER/obj/Debug/net8.0/TTNETFİBER.sourcelink.json

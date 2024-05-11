@@ -34,7 +34,7 @@ public static class netspeed
         var getSemtlist =  client.ExecuteAsync<ResponseModel>(request).Result;
 
 
-        foreach (var SemtItem in getSemtlist.Data.Data.Where(x=>x.Name.ToLower()=="merkez"))
+        foreach (var SemtItem in getSemtlist.Data.Data)
         {
             
             request =
@@ -132,16 +132,25 @@ public static class netspeed
 
         static void WriteToCsv(BeautifiedModel result, string filePath,bool writeHeader)
         {
-            using (var writer = new StreamWriter(filePath, true)) // Append modunu true olarak ayarlayın
-            using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+            try
             {
-                if(writeHeader)
+                using (var writer = new StreamWriter(filePath, true)) // Append modunu true olarak ayarlayın
+                using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
                 {
-                    csv.WriteHeader<BeautifiedModel>();
-                    csv.NextRecord();
+                    if (writeHeader)
+                    {
+                        csv.WriteHeader<BeautifiedModel>();
+                        csv.NextRecord();
+                    }
+
+                    csv.WriteRecord(result);
+                    writer.WriteLine();
                 }
-                csv.WriteRecord(result);
-                writer.WriteLine();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
             }
         }
     }
